@@ -3,7 +3,7 @@ class_name JoypadActionEcho
 extends Node
 ## Node that emits repeated events for joypads if an action is held.
 ## This is also known as an "echo" event and is usually a keyboard feature
-## in an OS. See [member InputEvent.is_echo()].
+## in an OS. See [method InputEvent.is_echo].
 
 ## The time in seconds to wait until echo events are sent.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var wait_time: float = 0.5

@@ -149,6 +149,11 @@ func get_vector(negative_x: StringName, positive_x: StringName, negative_y: Stri
 	)
 
 
+## Wrapper for [method Input.is_action_pressed].
+func is_action_pressed(action: StringName) -> bool:
+	return Input.is_action_pressed(get_player_action_name(action))
+
+
 ## Wrapper for [method Input.is_action_just_pressed].
 func is_action_just_pressed(action: StringName) -> bool:
 	return Input.is_action_just_pressed(get_player_action_name(action))

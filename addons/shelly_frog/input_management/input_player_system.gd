@@ -28,7 +28,7 @@ func _enter_tree() -> void:
 	FrogLog.message(message)
 
 
-## Returns the amount of active [InputPlayers].
+## Returns the amount of active [InputPlayer]s.
 func get_player_count() -> int:
 	return _players.size()
 

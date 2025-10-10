@@ -72,7 +72,7 @@ func get_id() -> int:
 
 
 ## Returns whether this player uses the device that emitted [param event].
-func caused_event(event: InputEvent):
+func caused_event(event: InputEvent) -> bool:
 	return (
 			(use_keyboard and (event is InputEventKey or event is InputEventMouse))
 			or _devices.has(event.device)

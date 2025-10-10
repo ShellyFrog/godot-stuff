@@ -22,7 +22,7 @@ signal unhandled_input_received(event: InputEvent)
 ## [b]Note:[/b] If set to a lower value than is currently set
 ## - other than [code]-1[/code] - the devices used by this player will be unassigned
 ## in order of assignment.
-@export_range(-1, 8, 1, "or_greater") var max_devices := -1:
+@export_range(-1, 8, 1, "or_greater") var max_devices: int -1:
 	set(value):
 		max_devices = max(value, -1)
 		if value != -1 and _devices.size() > value:
@@ -34,7 +34,7 @@ var _last_active_device: int = -1
 
 ## Whether to ignore the unhandled input callback for this player.
 ## This can be used to block input temporarily.
-var ignore_unhandled_input = false
+var ignore_unhandled_input: bool = false
 
 var _system: InputPlayerSystem
 var _devices: PackedInt32Array

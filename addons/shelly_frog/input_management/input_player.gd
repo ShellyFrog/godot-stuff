@@ -163,8 +163,8 @@ func _rebuild_actions():
 	if not _system:
 		return
 
-	for action in _system.player_actions:
-		var player_action = get_player_action_name(action)
+	for action: StringName in _system.player_actions:
+		var player_action: StringName = get_player_action_name(action)
 
 		if InputMap.has_action(player_action):
 			InputMap.action_erase_events(player_action)
@@ -172,7 +172,7 @@ func _rebuild_actions():
 			InputMap.add_action(player_action)
 
 		var events: Array[InputEvent] = _get_action_events_with_remaps(action)
-		for event in events:
+		for event: InputEvent in events:
 			if event is InputEventKey or event is InputEventMouse:
 				if use_keyboard:
 					InputMap.action_add_event(player_action, event)

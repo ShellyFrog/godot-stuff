@@ -5,8 +5,12 @@ extends Node
 ## Emitted when the available profiles have changed.
 signal profiles_changed()
 
+const NAME_KEY: String = "name"
+const SETTINGS_KEY: String = "settings"
+const BINDS_SECTION: String = "binds"
+
 @export var _directory := "user://input_profiles/"
-@export var _file_format := "input_profile%s.json"
+@export var _file_format := "input_profile%s.cfg"
 
 var _profiles: Dictionary[StringName, InputProfile]
 var _file_paths: Dictionary[InputProfile, String]
@@ -22,17 +26,50 @@ func _enter_tree():
 	var directory = DirAccess.open(_directory)
 
 	for file_name in directory.get_files():
-		if file_name.get_extension().to_lower() != "json":
+		if file_name.get_extension().to_lower() != _file_format.get_extension().to_lower():
 			continue
 
 		var file_path: String = _directory + file_name
-		var file = FileAccess.open(file_path, FileAccess.READ)
+		var file := FileAccess.open(file_path, FileAccess.READ)
 		if file == null:
 			var error: Error = FileAccess.get_open_error()
-			FrogLog.error("Could not open input profile at %s: %s" % [file_path, error_string(error)])
+			FrogLog.error("Failed to open input profile at %s: %s" % [file_path, error_string(error)])
 			continue
 
-		var profile := InputProfile.try_create_from_file(file)
+		var text: String = file.get_as_text()
+		text = SerializationUtil.strip_scripts(text)
+
+		var config := ConfigFile.new()
+		var parse_error: Error = config.parse(text)
+		if parse_error != OK:
+			FrogLog.error("Failed to parse input profile at %s: %s" % [file_path, error_string(parse_error)])
+			continue
+
+		var name: StringName = config.get_value(String(), NAME_KEY, String())
+		var settings: Dictionary[StringName, Variant] = config.get_value(String(), SETTINGS_KEY, String())
+		var binds: Dictionary[StringName, Array]
+
+		for action: String in config.get_section_keys(BINDS_SECTION):
+			var event_array: Array[InputEvent]
+	
+			var dict_array: Array = config.get_value(BINDS_SECTION, action, [])
+			if dict_array.is_empty():
+				continue
+	
+			for item in dict_array:
+				if item is not Dictionary:
+					continue
+				var dict := item as Dictionary
+				var event: InputEvent = InputProfile.parse_event_dict(dict)
+				if event:
+					event_array.append(event)
+	
+			if event_array.is_empty():
+				continue
+	
+			binds[action] = event_array
+
+		var profile := InputProfile.create(name, binds, settings)
 		if profile == null:
 			continue
 
@@ -91,11 +128,19 @@ func save_profile(profile: InputProfile) -> Error:
 
 		_file_paths[profile] = file_path
 
-	var file = FileAccess.open(file_path, FileAccess.WRITE)
-	if file == null:
-		var open_error: Error = FileAccess.get_open_error()
-		return open_error
-	profile.write(file)
+	var config := ConfigFile.new()
+	config.set_value(String(), NAME_KEY, profile.name)
+	config.set_value(String(), SETTINGS_KEY, profile.settings)
+	for action: StringName in profile.binds:
+		config.set_value(BINDS_SECTION, action, profile.binds[action].map(
+				func(event: InputEvent):
+					return InputProfile.get_event_dict(event)
+		))
+
+	var error: Error = config.save(file_path)
+	if error != OK:
+		FrogLog.error("Failed to save input profile to %s: %s" % [file_path, error_string(error)])
+		return error
 
 	if not _profiles.has(profile.name):
 		_profiles[profile.name] = profile

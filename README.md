@@ -5,7 +5,7 @@ This is a repository for sharing various systems and utility scripts I've writte
 > You may use these scripts under the provided license as you wish.
 
 > [!TIP]
-> Some plugins are not useful or have files not necessary to run
+> Some plugins are not useful in or have files not necessary to run
 > in an exported game. These are marked by being contained in a folder starting with
 > and underscore (_). For example: _editor_only, _icons, etc.  
 > You can exclude these folders from your exported game by adding them to your export

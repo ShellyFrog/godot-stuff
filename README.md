@@ -15,6 +15,10 @@ This is a repository for sharing various systems and utility scripts I've writte
 
 ## Contents
 
+### [Auto HLOD Import](https://github.com/ShellyFrog/godot-stuff/tree/main/addons/shelly_frog/_editor_only/auto_hlod_import)
+
+An [EditorScenePostImportPlugin](https://docs.godotengine.org/en/stable/classes/class_editorscenepostimportplugin.html) that allows automatically assigning [Visibility Ranges](https://docs.godotengine.org/en/stable/tutorials/3d/visibility_ranges.html) to 3D meshes based on a naming suffix, a maximum distance, and a distribution curve.
+
 ### [GDX Texture Atlas Importer](https://github.com/ShellyFrog/godot-stuff/tree/main/addons/shelly_frog/_editor_only/gdx_texture_atlas_import)
 
 An import plugin that allows importing [GDX Texture Packer](https://github.com/crashinvaders/gdx-texture-packer-gui) .atlas files as `AtlasTexture`s automatically.  

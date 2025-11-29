@@ -24,7 +24,7 @@ In case the first LOD does not have a number but other LOD meshes exist it will 
 For example with a setup such as:
 ```
 Mesh
-Mesh_LOD1
-Mesh_LOD2
+MeshLOD1
+MeshLOD2
 ```
 the mesh called "Mesh" will be assigned LOD level 0 automatically.

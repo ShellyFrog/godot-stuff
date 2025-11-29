@@ -1,6 +1,6 @@
 ## Auto HLOD Import
 
-![An example of the import options of the plugin.](https://github.com/ShellyFrog/godot-stuff/img/auto_hlod.webp)
+![An example of the import options of the plugin.](https://github.com/ShellyFrog/godot-stuff/blob/main/img/auto_hlod.webp)
 
 An [EditorScenePostImportPlugin](https://docs.godotengine.org/en/stable/classes/class_editorscenepostimportplugin.html) that allows automatically assigning [Visibility Ranges](https://docs.godotengine.org/en/stable/tutorials/3d/visibility_ranges.html) to 3D meshes based on a naming suffix, a maximum distance, and a distribution curve.
 

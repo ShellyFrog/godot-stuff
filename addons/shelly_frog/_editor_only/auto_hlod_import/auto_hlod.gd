@@ -69,11 +69,10 @@ func _post_process(scene: Node):
 		# Need float for proper divisions.
 		# Need to multiply the levels by 2 since a beginning and end is required.
 		var max_lod_level: float = (lods.values().max() + 1) * 2.0
-		var lod_begin: float = 0.0
-		var lod_end: float = 2.0
+		var lod_begin: float
+		var lod_end: float
 		for instance: GeometryInstance3D in lods:
 			lod_begin = lods[instance] * 2.0
 			lod_end = (lods[instance] + 1) * 2.0
-			print("LOD %d, %s begin, %s end, %s max" % [lods[instance], lod_begin, lod_end, max_lod_level])
 			instance.visibility_range_begin = ease(lod_begin / max_lod_level, easing) * max_distance
 			instance.visibility_range_end = ease(lod_end / max_lod_level, easing) * max_distance

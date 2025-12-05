@@ -42,7 +42,9 @@ func _post_process(scene: Node):
 
 		var lod_index: int = current.name.rfindn("lod")
 		if lod_index == -1 or current.name.length() <= lod_index:
-			if not current.name in dict:
+			if current.name in dict:
+				dict[current.name][current] = 0
+			else:
 				dict[current.name] = { current: 0 }
 			continue
 

@@ -23,6 +23,10 @@ An [EditorScenePostImportPlugin](https://docs.godotengine.org/en/stable/classes/
 
 An import plugin that allows importing [GDX Texture Packer](https://github.com/crashinvaders/gdx-texture-packer-gui) .atlas files as `AtlasTexture`s automatically.  
 
+### [MotionTrail3D](https://github.com/ShellyFrog/godot-stuff/tree/main/addons/shelly_frog/motion_trail_3d)
+
+An implementation of a 3D trail that follows a node with optional physics and interpolation.
+
 ### [Input Management](https://github.com/ShellyFrog/godot-stuff/tree/main/addons/shelly_frog/input_management)
 
 A system for handling the concept of "players" for input, allowing assigning devices and remapping input per player.

@@ -27,6 +27,10 @@ An import plugin that allows importing [GDX Texture Packer](https://github.com/c
 
 An implementation of a 3D trail that follows a node with optional physics and interpolation.
 
+### [State Machines](https://github.com/ShellyFrog/godot-stuff/tree/main/addons/shelly_frog/state_machine)
+
+An implementation of a finite state machine as well as a state machine with a push automata as a node.
+
 ### [Input Management](https://github.com/ShellyFrog/godot-stuff/tree/main/addons/shelly_frog/input_management)
 
 A system for handling the concept of "players" for input, allowing assigning devices and remapping input per player.

@@ -106,13 +106,13 @@ var interpolation_iterations: int = 3
 ## [br]
 ## [b]Note:[/b] This does not interact with the regular
 ## physics system.
-@export_custom(PROPERTY_HINT_GROUP_ENABLE, String())
+@export_custom(PROPERTY_HINT_GROUP_ENABLE, "checkbox_only")
 var enable_physics: bool = false:
 	set(value):
 		if enable_physics == value:
 			return
 		enable_physics = value
-		set_physics_process_internal(value)
+		set_physics_process(value)
 ## If [code]true[/code], points will automatically be emitted
 ## while physics are enabled.
 @export var auto_emit_physics_points: bool = true
@@ -215,7 +215,7 @@ func _simulate_physics(delta: float):
 
 func _notification(notification: int):
 	match notification:
-		NOTIFICATION_INTERNAL_PHYSICS_PROCESS:
+		NOTIFICATION_PHYSICS_PROCESS:
 			_simulate_physics(get_physics_process_delta_time())
 		NOTIFICATION_PAUSED:
 			_paused = true
@@ -244,10 +244,15 @@ func _get_transform() -> Transform3D:
 
 
 func _get_parent_transform() -> Transform3D:
+	var parent: Node3D = simulation_parent
+	if not parent:
+		parent = get_parent_node_3d()
+	if not parent:
+		return Transform3D.IDENTITY
 	return (
-			simulation_parent.get_global_transform_interpolated() 
-			if simulation_parent.is_physics_interpolated_and_enabled() 
-			else simulation_parent.global_transform
+			parent.get_global_transform_interpolated() 
+			if parent.is_physics_interpolated_and_enabled() 
+			else parent.global_transform
 	)
 
 
@@ -256,9 +261,7 @@ func _get_current_position() -> Vector3:
 	if simulation_space == Space.GLOBAL:
 		return transform.origin
 	else:
-		if is_instance_valid(simulation_parent):
-			return transform.origin * _get_parent_transform()
-		return transform.origin * transform
+		return transform.origin * _get_parent_transform()
 
 
 func _create_new_point_if_needed(position: Vector3, delta: float):
@@ -274,16 +277,9 @@ func _create_new_point_if_needed(position: Vector3, delta: float):
 	elif position.distance_squared_to(_last_valid_position) < min_distance_between_points * min_distance_between_points:
 		return
 
-	var velocity: Vector3
-	if simulation_space == Space.GLOBAL:
-		velocity = start_velocity
-	else:
-		if is_instance_valid(simulation_parent):
-			# to_local -> to_global
-			velocity = _get_parent_transform().basis * (velocity * _get_transform().basis)
-		else:
-			# to_local
-			velocity = _get_transform().basis * velocity
+	var velocity: Vector3 = start_velocity
+	if simulation_space != Space.GLOBAL:
+		velocity = (_get_transform().basis * velocity) * _get_parent_transform().basis
 
 	# Store the local basis by default when creating the mesh.
 	_points.append(Point.new(position, -basis.z, basis.y, velocity + (_velocity * inherit_velocity_ratio), life_time))

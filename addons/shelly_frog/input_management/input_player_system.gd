@@ -23,7 +23,7 @@ func _enter_tree() -> void:
 	var joypads: PackedInt32Array = Input.get_connected_joypads()
 
 	var message = "Connected Joypads (%s):\n" % joypads.size()
-	for joypad in joypads:
+	for joypad: int in joypads:
 		message += "[ul]\"%s\" (id: %s)[/ul]" % [Input.get_joy_name(joypad), joypad]
 	FrogLog.message(message)
 

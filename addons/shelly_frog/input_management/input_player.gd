@@ -167,11 +167,11 @@ func _rebuild_actions():
 	if not _system:
 		return
 
-	FrogLog.message("Rebuilding actions for player %d" % get_id())
+	FrogLog.debug("Rebuilding actions for player %d" % get_id())
 
 	for action: StringName in _system.player_actions:
 		var player_action: StringName = get_player_action_name(action)
-		FrogLog.message("Building Action \"%s\"..." % player_action)
+		FrogLog.debug("Building Action \"%s\"..." % player_action)
 
 		if InputMap.has_action(player_action):
 			InputMap.action_erase_events(player_action)

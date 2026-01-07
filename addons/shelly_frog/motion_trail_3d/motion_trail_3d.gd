@@ -44,7 +44,12 @@ enum Alignment {
 ## Determines how the trail mesh should be aligned.
 @export var alignment_mode := Alignment.VIEW
 ## The space to use for evaluating whether to emit a trail point.
-@export var simulation_space := Space.GLOBAL
+@export var simulation_space := Space.GLOBAL:
+	set(value):
+		if simulation_space == value:
+			return
+		_update_simulation_space(value)
+		simulation_space = value
 ## Overrides the transform used with [member simulation_space].
 ## [br]
 ## This can be used for cases such as needing the trail to be in
@@ -233,6 +238,18 @@ func _update_trail():
 	if _paused:
 		return
 	_create_mesh()
+
+
+func _update_simulation_space(new: Space):
+	match new:
+		Space.LOCAL:
+			for point: Point in _points:
+				point.position = point.position * _get_parent_transform()
+				point.velocity = (_get_transform().basis * point.velocity) * _get_parent_transform().basis
+		Space.GLOBAL:
+			for point: Point in _points:
+				point.position = _get_parent_transform() * point.position
+				point.velocity = _get_parent_transform() * point.velocity
 
 
 func _get_transform() -> Transform3D:

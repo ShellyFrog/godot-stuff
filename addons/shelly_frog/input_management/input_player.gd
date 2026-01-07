@@ -22,7 +22,7 @@ signal unhandled_input_received(event: InputEvent)
 ## [b]Note:[/b] If set to a lower value than is currently set
 ## - other than [code]-1[/code] - the devices used by this player will be unassigned
 ## in order of assignment.
-@export_range(-1, 8, 1, "or_greater") var max_devices: int -1:
+@export_range(-1, 8, 1, "or_greater") var max_devices: int = -1:
 	set(value):
 		max_devices = max(value, -1)
 		if value != -1 and _devices.size() > value:
@@ -112,12 +112,11 @@ func add_device(device: int):
 
 
 ## Makes this player stop using [param device].
-func remove_device(device: int):
-	if not _devices.has(device):
-		return
-
-	_devices.erase(device)
-	_rebuild_actions()
+func remove_device(device: int) -> bool:
+	if _devices.erase(device):
+		_rebuild_actions()
+		return true
+	return false
 
 
 ## Returns the device id of the last active device this player received input from
@@ -150,7 +149,7 @@ func get_vector(negative_x: StringName, positive_x: StringName, negative_y: Stri
 
 
 ## Wrapper for [method Input.is_action_pressed].
-func is_action_pressed(action: StringName) -> bool:
+func is_action_pressed(action: StringName, exact_match: bool = false) -> bool:
 	return Input.is_action_pressed(get_player_action_name(action))
 
 
@@ -168,8 +167,11 @@ func _rebuild_actions():
 	if not _system:
 		return
 
+	FrogLog.message("Rebuilding actions for player %d" % get_id())
+
 	for action: StringName in _system.player_actions:
 		var player_action: StringName = get_player_action_name(action)
+		FrogLog.message("Building Action \"%s\"..." % player_action)
 
 		if InputMap.has_action(player_action):
 			InputMap.action_erase_events(player_action)

@@ -54,15 +54,12 @@ func _handle_joy_connection_changed(device: int, connected: bool):
 	else:
 		FrogLog.message("Device with ID %s disconnected." % device)
 
-	for player in _players.values():
+	for player: InputPlayer in _players.values():
 		if connected:
 			if player.can_accept_new_devices():
-				player.add_device(device)
-
 				FrogLog.message("Device %s (ID: %s) was assigned to player %s" % [Input.get_joy_name(device), device, player.get_id() + 1])
+				player.add_device(device)
 				break
 		else:
-			if player.devices.has(device):
-				player.remove_device(device)
-
+			if player.remove_device(device):
 				FrogLog.message("Device with ID %s was unassigned from player %s" % [device, player.get_id() + 1])

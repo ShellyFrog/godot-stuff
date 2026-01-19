@@ -18,17 +18,17 @@ signal exited_visual
 func is_allowed_visual_updates() -> bool
 
 
-func _enter(previous_state: FiniteState):
-	_enter_logic(previous_state)
+func _enter(old_state: FiniteState):
+	_enter_logic(old_state)
 	if is_allowed_visual_updates():
-		_enter_visual(previous_state)
+		_enter_visual(old_state)
 		entered_visual.emit()
 
 
-func _exit(next_state: FiniteState):
-	_exit_logic(next_state)
+func _exit(new_state: FiniteState):
+	_exit_logic(new_state)
 	if is_allowed_visual_updates():
-		_exit_visual(next_state)
+		_exit_visual(new_state)
 		exited_visual.emit()
 
 

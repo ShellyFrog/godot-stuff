@@ -63,5 +63,6 @@ func _state_physics_process(delta: float):
 
 
 ## Called when an input has been made.
-func _handle_input(input: int, state: InputState):
-	pass
+## Should return whether the input was handled or not.
+func _handle_input(input: int, state: InputState) -> bool:
+	return false

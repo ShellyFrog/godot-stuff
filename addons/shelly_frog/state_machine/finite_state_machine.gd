@@ -19,6 +19,13 @@ extends FiniteState
 ## or by using [method set_state].
 signal state_changed(old_state: FiniteState, new_state: FiniteState)
 
+enum StateMachineType {
+	## This state machine will enter its start state automatically.
+	ROOT,
+	## This state machine must be handled by another state machine.
+	SUB_STATE_MACHINE,
+}
+
 enum UpdateMode {
 	## The state machine has to be updated manually.
 	MANUAL,
@@ -26,6 +33,8 @@ enum UpdateMode {
 	AUTOMATIC,
 }
 
+## How to treat this state machine.
+@export var type := StateMachineType.ROOT
 ## The state to start from.
 ## If not set the first state in [member _state_map] will be used.
 ## By default this will be the first child of this node that
@@ -59,6 +68,11 @@ var _state_map: Dictionary[int, FiniteState]
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_process(false)
+		set_physics_process(false)
+		return
+
 	_initialize()
 
 	if _state_map.is_empty():
@@ -72,9 +86,11 @@ func _ready() -> void:
 		if not starting_state:
 			starting_state = state
 		state.initialize(self)
+		state.finished.connect(transition_to)
 
-	current_state = starting_state
-	current_state.enter(null)
+	if type == StateMachineType.ROOT:
+		enter(null)
+		FrogLog.debug("%s start state entered." % name)
 
 	set_process(mode_process == UpdateMode.AUTOMATIC)
 	set_physics_process(mode_physics == UpdateMode.AUTOMATIC)
@@ -93,8 +109,10 @@ func _can_transition_to() -> bool:
 
 
 func _enter(previous_state: FiniteState):
+	var old_state: FiniteState = current_state
 	current_state = starting_state
-	starting_state.enter(null)
+	current_state.enter(null)
+	state_changed.emit(old_state, current_state)
 
 
 func _exit(next_state: FiniteState):
@@ -109,8 +127,8 @@ func _state_physics_process(delta: float):
 	current_state._state_physics_process(delta)
 
 
-func _handle_input(input: int, state: InputState):
-	current_state._handle_input(input, state)
+func _handle_input(input: int, state: InputState) -> bool:
+	return current_state._handle_input(input, state)
 
 
 ## Returns the ID used in [member _state_map] for the
@@ -151,12 +169,9 @@ func transition_to(state_id: int) -> bool:
 
 	var previous_state: FiniteState = current_state
 
-	previous_state.finished.disconnect(transition_to)
 	previous_state.exit(next_state)
 
 	current_state = next_state
-
-	current_state.finished.connect(transition_to)
 	current_state.enter(previous_state)
 
 	state_changed.emit(previous_state, current_state)

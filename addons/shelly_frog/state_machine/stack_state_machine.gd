@@ -1,7 +1,7 @@
 @icon("./_icons/StackStateMachine.svg")
 class_name StackStateMachine
 extends FiniteStateMachine
-## A [FiniteStateMachine] that implements a push automata.
+## A [FiniteStateMachine] that implements a push automaton.
 ##
 ## The push automata allows for returning to previous states
 ## automatically by calling [method push_state] and then using
@@ -14,8 +14,8 @@ var _state_stack: Array[FiniteState]
 
 
 func _ready() -> void:
-	super._ready()
-	_state_stack.push_front(current_state)
+	super()
+	clear_stack()
 
 
 ## Transitions from the current state to the state with ID [param state_id]
@@ -35,16 +35,14 @@ func transition_to(state_id: int) -> bool:
 		var next_state: FiniteState = _state_map.get(state_id, null)
 		if not next_state or not next_state._can_transition_to():
 			return false
+		_state_stack[0] = next_state
 
 	var next_state: FiniteState = _state_stack[0]
 	var previous_state: FiniteState = current_state
 
-	previous_state.finished.disconnect(transition_to)
 	previous_state.exit(next_state)
 
 	current_state = next_state
-
-	current_state.finished.connect(transition_to)
 	if state_id != STATE_PREVIOUS:
 		current_state.enter(previous_state)
 
@@ -55,3 +53,8 @@ func transition_to(state_id: int) -> bool:
 ## Pushes a state onto the stack.
 func push_state(state: FiniteState):
 	_state_stack.push_front(state)
+
+
+## Clears the state stack, making returning to previous states impossible.
+func clear_stack():
+	_state_stack = [starting_state]
